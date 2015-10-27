@@ -64,7 +64,13 @@ static void init_button_pio()
 
 int main(void)
 {
-    int led = 0x01;
+    int led = 0x00;
+
+    int a1 = 0;
+    int a2 = 0;
+    int a3 = 0;
+    int a4 = 0;
+
     edge_capture = 0xF;
 
     init_button_pio();
@@ -76,24 +82,50 @@ int main(void)
     {
         if (edge_capture != NONE_PRESSED)  // if button pressed
         {
+
             switch(edge_capture) {
                 case BTN_RIGHT_PRESSED:
-                    led = 0x01;
+                	if (a1 == 0) {
+                		led += 0x02;
+                		a1 = 1;
+                	}
+                	else {
+                		led -= 0x02;
+                		a1 = 0;
+                	}
+
                     break;
                 case BTN_LEFT_PRESSED:
-                    led = 0x80;
+
+                	if (a2 == 0) {
+                		led += 0x10;
+                		a2 = 1;
+                	}
+                	else {
+                		led -= 0x10;
+                		a2 = 0;
+                	}
+
                     break;
                 case BTN_CNTR_RIGHT:
-                    if (led == 0x1)
-                        led = 0x80;
-                    else
-                        led = led >> 1;
+                	if (a3 == 0) {
+                		led += 0x04;
+                		a3 = 1;
+                	}
+                	else {
+                		led -= 0x04;
+                		a3 = 0;
+                	}
                     break;
                 case BTN_CNTR_LEFT:
-                    if (led == 0x80)
-                        led = 0x1;
-                    else
-                        led = led << 1;
+                	if (a4 == 0) {
+                		led += 0x08;
+                		a4 = 1;
+                	}
+                	else {
+                		led -= 0x08;
+                		a4 = 0;
+                	}
                     break;
 
             }
