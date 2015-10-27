@@ -46,10 +46,13 @@ static void init_button_pio()
     alt_irq_register() function prototype. */
     void* edge_capture_ptr = (void*) &edge_capture;
     /* Enable all 4 button interrupts. */
+    //можем обрабатывать со всех четырех линий.кнопок
     IOWR_ALTERA_AVALON_PIO_IRQ_MASK(BUTTONS_BASE, 0xf);
     /* Reset the edge capture register. */
+    // сбрасываем регистр edge capture
     IOWR_ALTERA_AVALON_PIO_EDGE_CAP(BUTTONS_BASE, 0x0);
     /* Register the ISR. */
+    // задание обработчика прерываний
     #ifdef ALT_ENHANCED_INTERRUPT_API_PRESENT
         alt_ic_isr_register(BUTTONS_IRQ_INTERRUPT_CONTROLLER_ID,
             BUTTONS_IRQ,
