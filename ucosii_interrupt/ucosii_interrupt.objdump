@@ -1,6 +1,6 @@
 
-ucosii_tutorial.elf:     file format elf32-littlenios2
-ucosii_tutorial.elf
+ucosii_interrupt.elf:     file format elf32-littlenios2
+ucosii_interrupt.elf
 architecture: nios2:r1, flags 0x00000112:
 EXEC_P, HAS_SYMS, D_PAGED
 start address 0x01200240
@@ -43,9 +43,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  14 .debug_frame  00003828  00000000  00000000  0006baa8  2**2
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_str    0000504d  00000000  00000000  0006f2d0  2**0
+ 15 .debug_str    0000504e  00000000  00000000  0006f2d0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_loc    000172d1  00000000  00000000  0007431d  2**0
+ 16 .debug_loc    000172d1  00000000  00000000  0007431e  2**0
                   CONTENTS, READONLY, DEBUGGING
  17 .debug_alt_sim_info 00000050  00000000  00000000  0008b5f0  2**2
                   CONTENTS, READONLY, DEBUGGING
