@@ -51,7 +51,7 @@ void print_status_task(void* pdata)
 
 
   while (1)
-  { 
+  {
 
 		OS_Q_DATA qdata;
 		INT8U err;
@@ -63,7 +63,7 @@ void print_status_task(void* pdata)
     err = OSQQuery(msgqueue, &qdata);
 
     printf("****************************************************************\n");
-    printf("Hello From MicroC/OS-II Running on NIOS II.  Here is the status:\n");
+    printf("HDshSDHSDHdshSDHdHHSDHHDSdhh:\n");
     printf("\n");
 
     if (err == OS_ERR_NONE) {
@@ -75,19 +75,19 @@ void print_status_task(void* pdata)
 
     printf("Time %lu\n", clk);
 
-    printf("The number of messages sent by the send_task:         %lu\n",
+    printf("SDHHDdsfHDSFHHDSSDhSH%lu\n",
             number_of_messages_sent);
     printf("\n");
-    printf("The number of messages received by the receive_task1: %lu\n",
+    printf("HdHDhDhSDhgHdhDhHsdh: %lu\n",
             number_of_messages_received_task1);
     printf("\n");
-    printf("The number of messages received by the receive_task2: %lu\n",
+    printf("HdhDHHdhHHdHDH: %lu\n",
             number_of_messages_received_task2);
     printf("\n");
     printf("The shared resource is owned by: %s\n",
            &sem_owner_task_name[0]);
     printf("\n");
-    printf("The Number of times getsem_task1 acquired the semaphore %lu\n",
+    printf("HdshhhHdshHdshHdhH\n",
             getsem_task1_got_sem);
     printf("\n");
     printf("The Number of times getsem_task2 acquired the semaphore %lu\n",
@@ -103,7 +103,7 @@ void print_status_task(void* pdata)
 void getsem_task1(void* pdata)
 {
   INT8U return_code = OS_NO_ERR;
-  
+
   INT8U led;
   led=1;
 
@@ -147,8 +147,8 @@ void send_task(void* pdata)
   {
     return_code = OSQQuery(msgqueue, &queue_data);
     alt_ucosii_check_return_code(return_code);
-    if(queue_data.OSNMsgs < MSG_QUEUE_SIZE) 
-    {                                       
+    if(queue_data.OSNMsgs < MSG_QUEUE_SIZE)
+    {
       return_code = OSQPostOpt(msgqueue, (void *)&msg, OS_POST_OPT_BROADCAST);
       alt_ucosii_check_return_code(return_code);
       msg++;
