@@ -51,8 +51,10 @@ OS_EVENT *shared_resource_sem;
 
 INT8U led;
 INT32U led_counter = 10;
-INT32U *msg;
+INT32U state = 1;
 
+OS_TMR *LedTmr;
+BOOLEAN status;
 
 /* Глобальные переменные */
 INT32U number_of_messages_sent = 0;
@@ -94,36 +96,16 @@ void get_sem_task2(void* pdata)
 	INT8U err;
     INT32U buf = -1;
 
-    OS_TMR *LedTmr;
-    BOOLEAN status;
-
   while (1)
   {
 
-	    OSTimeDlyHMSM(0, 0, 3, 0);
-
-	    printf("led_counter %lu\n", led_counter);
+	    //printf("led_counter %lu\n", led_counter);
 
 	    IOWR_ALTERA_AVALON_PIO_DATA(GREEN_LED_BASE,0);
 
-	    if (*msg == (BTN_RIGHT_PRESSED || BTN_LEFT_PRESSED || BTN_CNTR_RIGHT || BTN_CNTR_LEFT)) {
+    status = OSTmrStart(LedTmr, &err);
 
-    LedTmr = OSTmrCreate(
-    		0,
-    		led_counter,
-    		OS_TMR_OPT_PERIODIC,
-    		TimerISRFnct,
-    		NULL,
-    		"TmrLed",
-    		&err);
-
-    if (err == OS_ERR_NONE) {
-    /* Timer was created but NOT started */
-    	status = OSTmrStart(LedTmr,
-    	&err);
-    }
-
-	    }
+    OSTimeDlyHMSM(0, 0, 0, 10);
 
   }
 }
@@ -156,11 +138,14 @@ void send_task(void* pdata)
 void receive_task1(void* pdata)
 {
   INT8U return_code = OS_NO_ERR;
+  INT32U *msg;
+  INT8U err;
   int i;
   
   while (1)
   {
     msg = (INT32U *)OSQPend(msgqueue, 0, &return_code);
+
     alt_ucosii_check_return_code(return_code);
     number_of_messages_received_task1++;
 
@@ -169,26 +154,73 @@ void receive_task1(void* pdata)
 		case BTN_RIGHT_PRESSED:
 			IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, 0x79);
 
-			led_counter = 100;
+			led_counter = 8;
+
+			OSTmrDel(LedTmr,
+			&err);
+
+			 LedTmr = OSTmrCreate(
+					 led_counter,
+					    		0,
+					    		OS_TMR_OPT_ONE_SHOT,
+					    		TimerISRFnct,
+					    		NULL,
+					    		"TmrLed",
+					    		&err);
 
 			break;
 		case BTN_LEFT_PRESSED:
 			IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, 0x19);
 
-			led_counter = 1000;
+			led_counter = 4;
+
+			OSTmrDel(LedTmr,
+			&err);
+
+		    LedTmr = OSTmrCreate(
+		    		led_counter,
+		    		0,
+		    		OS_TMR_OPT_ONE_SHOT,
+		    		TimerISRFnct,
+		    		NULL,
+		    		"TmrLed",
+		    		&err);
 
 			break;
 		case BTN_CNTR_RIGHT:
 			IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, 0x24);
 
-			led_counter = 500;
+			led_counter = 2;
+
+			OSTmrDel(LedTmr,
+						&err);
+
+			LedTmr = OSTmrCreate(
+					led_counter,
+					0,
+					OS_TMR_OPT_ONE_SHOT,
+					TimerISRFnct,
+					NULL,
+					"TmrLed",
+					&err);
 
 			break;
 		case BTN_CNTR_LEFT:
 			IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, 0x30);
 
-			led_counter = 250;
+			led_counter = 6;
 
+			OSTmrDel(LedTmr,
+						&err);
+
+			LedTmr = OSTmrCreate(
+					led_counter,
+					0,
+					OS_TMR_OPT_ONE_SHOT,
+					TimerISRFnct,
+					NULL,
+					"TmrLed",
+					&err);
 			break;
 		default:
 			for (i = 0; i < counter; i++)
