@@ -178,7 +178,7 @@ CRT0 :=
 SYS_LIB :=
 
 # Define path to the root of the BSP.
-BSP_ROOT_DIR := ../ucosii_tutorial_bsp/
+BSP_ROOT_DIR := D:\Altera\IU3-17M\Gutnikov\embsw\nios_II_lab_1\SysBuild\CodeGenerated\DE2_115\Lab1_POVS\software\ucosii_tutorial_bsp
 
 # List of application specific include directories, library directories and library names
 APP_INCLUDE_DIRS :=

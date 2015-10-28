@@ -17,6 +17,8 @@ OS_STK    receive_task1_stk[TASK_STACKSIZE];
 OS_STK    receive_task2_stk[TASK_STACKSIZE];
 OS_STK    send_task_stk[TASK_STACKSIZE];
 
+OS_TMR *LedTmr;
+
 /* Приоритеты задач */
 #define INITIALIZE_TASK_PRIORITY   6
 #define GET_SEM_TASK_PRIORITY      7
@@ -25,6 +27,8 @@ OS_STK    send_task_stk[TASK_STACKSIZE];
 #define RECEIVE_TASK1_PRIORITY    10
 #define RECEIVE_TASK2_PRIORITY    11
 #define SEND_TASK_PRIORITY        12
+
+INT32U led_counter = 0;
 
 INT32U button_pressed = 0;
 
@@ -59,6 +63,12 @@ char sem_owner_task_name[20];
 int initOSDataStructs(void);
 int initCreateTasks(void);
 
+void SomeFnct() {
+
+    printf("test412125r125");
+
+}
+
 void isr_button(void* context, alt_u32 id)
 {
 
@@ -76,54 +86,26 @@ void isr_button(void* context, alt_u32 id)
 
 void get_sem_task2(void* pdata)
 {
+	INT8U err;
+	INT8U led;
+	led=255;
 
   while (1)
   {
-
-		OS_Q_DATA qdata;
-		INT8U err;
-
-		INT32U clk;
+	IOWR_ALTERA_AVALON_PIO_DATA(GREEN_LED_BASE,led);
 
     OSTimeDlyHMSM(0, 0, 3, 0);
 
-    err = OSQQuery(msgqueue, &qdata);
+    printf("led_counter %lu\n", led_counter);
 
-    printf("****************************************************************\n");
-    printf("Hello From MicroC/OS-II Running on NIOS II.  Here is the status:\n");
-    printf("\n");
-
-    if (err == OS_ERR_NONE) {
-
-        printf("Size of query %lu\n", qdata.OSNMsgs);
-    }
-
-    clk = OSTimeGet(); /* Get current value of system clock */
-
-    printf("Time %lu\n", clk);
-
-    printf("The number of messages sent by the send_task:         %lu\n",
-            number_of_messages_sent);
-    printf("\n");
-    printf("The number of messages received by the receive_task1: %lu\n",
-            number_of_messages_received_task1);
-    printf("\n");
-    printf("The number of messages received by the receive_task2: %lu\n",
-            number_of_messages_received_task2);
-    printf("\n");
-    printf("The shared resource is owned by: %s\n",
-           &sem_owner_task_name[0]);
-    printf("\n");
-    printf("The Number of times getsem_task1 acquired the semaphore %lu\n",
-            getsem_task1_got_sem);
-    printf("\n");
-    printf("The Number of times getsem_task2 acquired the semaphore %lu\n",
-            getsem_task2_got_sem);
-    printf("\n");
-    printf("****************************************************************\n");
-    printf("\n");
-
-
+    LedTmr = OSTmrCreate(
+    		10,
+    		100,
+    		OS_TMR_OPT_PERIODIC,
+    		SomeFnct,
+    		(void *)0,
+    		"DoorClose",
+    		&err);
   }
 }
 
@@ -163,17 +145,20 @@ void receive_task1(void* pdata)
     msg = (INT32U *)OSQPend(msgqueue, 0, &return_code);
     alt_ucosii_check_return_code(return_code);
     number_of_messages_received_task1++;
-    //IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, *msg);
-    //sevenseg_set_hex(*msg);
+
 	switch(*msg)
 	{
 		case BTN_RIGHT_PRESSED:
 			IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, 0x79);
-			//sevenseg_set_hex(14);
+
+			led_counter -= 1;
+
 			break;
 		case BTN_LEFT_PRESSED:
 			IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, 0x19);
-			//sevenseg_set_hex(7);
+
+			led_counter += 1;
+
 			break;
 		case BTN_CNTR_RIGHT:
 			IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, 0x24);
@@ -187,11 +172,7 @@ void receive_task1(void* pdata)
 			for (i = 0; i < counter; i++)
 			//while (counter--)
 				printf("%d Btn = %x\n", i, global_array[i]);
-
 	}
-
-
-
 
     //printf("Msg task1 0x%8x\n", *msg);
     OSTimeDlyHMSM(0, 0, 0, 333);
