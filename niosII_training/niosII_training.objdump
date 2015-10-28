@@ -632,18 +632,21 @@ static void init_button_pio()
  1200304:	d0a01004 	addi	r2,gp,-32704
  1200308:	e0bfff15 	stw	r2,-4(fp)
     /* Enable all 4 button interrupts. */
+    //можем обрабатывать со всех четырех линий.кнопок
     IOWR_ALTERA_AVALON_PIO_IRQ_MASK(BUTTONS_BASE, 0xf);
  120030c:	00c003c4 	movi	r3,15
  1200310:	00805034 	movhi	r2,320
  1200314:	10841204 	addi	r2,r2,4168
  1200318:	10c00035 	stwio	r3,0(r2)
     /* Reset the edge capture register. */
+    // сбрасываем регистр edge capture
     IOWR_ALTERA_AVALON_PIO_EDGE_CAP(BUTTONS_BASE, 0x0);
  120031c:	0007883a 	mov	r3,zero
  1200320:	00805034 	movhi	r2,320
  1200324:	10841304 	addi	r2,r2,4172
  1200328:	10c00035 	stwio	r3,0(r2)
     /* Register the ISR. */
+    // задание обработчика прерываний
     #ifdef ALT_ENHANCED_INTERRUPT_API_PRESENT
         alt_ic_isr_register(BUTTONS_IRQ_INTERRUPT_CONTROLLER_ID,
  120032c:	d8000015 	stw	zero,0(sp)
@@ -8841,7 +8844,7 @@ int main(void)
  1207ca0:	d9400015 	stw	r5,0(sp)
  1207ca4:	d9800115 	stw	r6,4(sp)
  1207ca8:	d9c00215 	stw	r7,8(sp)
- 1207cac:	00000000 	call	0 <__reset-0x800000>
+ 1207cac:	00000000 	call	0 <__alt_mem_ext_flash_ctl-0x800000>
  1207cb0:	d9400017 	ldw	r5,0(sp)
  1207cb4:	d9800117 	ldw	r6,4(sp)
  1207cb8:	d9c00217 	ldw	r7,8(sp)
@@ -8927,7 +8930,7 @@ int main(void)
  1207df0:	10003426 	beq	r2,zero,1207ec4 <__call_exitprocs+0x18c>
  1207df4:	9809883a 	mov	r4,r19
  1207df8:	a8800015 	stw	r2,0(r21)
- 1207dfc:	00000000 	call	0 <__reset-0x800000>
+ 1207dfc:	00000000 	call	0 <__alt_mem_ext_flash_ctl-0x800000>
  1207e00:	acc00017 	ldw	r19,0(r21)
  1207e04:	983fe41e 	bne	r19,zero,1207d98 <__alt_mem_instruction_tcm+0xff207d98>
  1207e08:	dfc00b17 	ldw	ra,44(sp)

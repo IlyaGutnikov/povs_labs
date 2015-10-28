@@ -100,6 +100,7 @@ void print_status_task(void* pdata)
   }
 }
 
+
 void getsem_task1(void* pdata)
 {
   INT8U return_code = OS_NO_ERR;
