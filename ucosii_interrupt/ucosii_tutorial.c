@@ -17,7 +17,7 @@ OS_STK    receive_task1_stk[TASK_STACKSIZE];
 OS_STK    receive_task2_stk[TASK_STACKSIZE];
 OS_STK    send_task_stk[TASK_STACKSIZE];
 
-OS_TMR *LedTmr;
+
 
 /* Приоритеты задач */
 #define INITIALIZE_TASK_PRIORITY   6
@@ -27,8 +27,6 @@ OS_TMR *LedTmr;
 #define RECEIVE_TASK1_PRIORITY    10
 #define RECEIVE_TASK2_PRIORITY    11
 #define SEND_TASK_PRIORITY        12
-
-INT32U led_counter = 0;
 
 INT32U button_pressed = 0;
 
@@ -51,6 +49,11 @@ void      *msgqueueTbl[MSG_QUEUE_SIZE]; // Storage for messages
 /* Объявление семафора */
 OS_EVENT *shared_resource_sem;
 
+INT8U led;
+INT32U led_counter = 10;
+INT32U *msg;
+
+
 /* Глобальные переменные */
 INT32U number_of_messages_sent = 0;
 INT32U number_of_messages_received_task1 = 0;
@@ -63,9 +66,11 @@ char sem_owner_task_name[20];
 int initOSDataStructs(void);
 int initCreateTasks(void);
 
-void SomeFnct() {
+void TimerISRFnct() {
 
-    printf("test412125r125");
+	led = 255;
+
+	IOWR_ALTERA_AVALON_PIO_DATA(GREEN_LED_BASE,led);
 
 }
 
@@ -87,25 +92,39 @@ void isr_button(void* context, alt_u32 id)
 void get_sem_task2(void* pdata)
 {
 	INT8U err;
-	INT8U led;
-	led=255;
+    INT32U buf = -1;
+
+    OS_TMR *LedTmr;
+    BOOLEAN status;
 
   while (1)
   {
-	IOWR_ALTERA_AVALON_PIO_DATA(GREEN_LED_BASE,led);
 
-    OSTimeDlyHMSM(0, 0, 3, 0);
+	    OSTimeDlyHMSM(0, 0, 3, 0);
 
-    printf("led_counter %lu\n", led_counter);
+	    printf("led_counter %lu\n", led_counter);
+
+	    IOWR_ALTERA_AVALON_PIO_DATA(GREEN_LED_BASE,0);
+
+	    if (*msg == (BTN_RIGHT_PRESSED || BTN_LEFT_PRESSED || BTN_CNTR_RIGHT || BTN_CNTR_LEFT)) {
 
     LedTmr = OSTmrCreate(
-    		10,
-    		100,
+    		0,
+    		led_counter,
     		OS_TMR_OPT_PERIODIC,
-    		SomeFnct,
-    		(void *)0,
-    		"DoorClose",
+    		TimerISRFnct,
+    		NULL,
+    		"TmrLed",
     		&err);
+
+    if (err == OS_ERR_NONE) {
+    /* Timer was created but NOT started */
+    	status = OSTmrStart(LedTmr,
+    	&err);
+    }
+
+	    }
+
   }
 }
 
@@ -137,7 +156,6 @@ void send_task(void* pdata)
 void receive_task1(void* pdata)
 {
   INT8U return_code = OS_NO_ERR;
-  INT32U *msg;
   int i;
   
   while (1)
@@ -151,22 +169,26 @@ void receive_task1(void* pdata)
 		case BTN_RIGHT_PRESSED:
 			IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, 0x79);
 
-			led_counter -= 1;
+			led_counter = 100;
 
 			break;
 		case BTN_LEFT_PRESSED:
 			IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, 0x19);
 
-			led_counter += 1;
+			led_counter = 1000;
 
 			break;
 		case BTN_CNTR_RIGHT:
 			IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, 0x24);
-			//sevenseg_set_hex(13);
+
+			led_counter = 500;
+
 			break;
 		case BTN_CNTR_LEFT:
 			IOWR_ALTERA_AVALON_PIO_DATA(SEVEN_SEG_BASE, 0x30);
-			//sevenseg_set_hex(11);
+
+			led_counter = 250;
+
 			break;
 		default:
 			for (i = 0; i < counter; i++)
