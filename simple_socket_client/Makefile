@@ -144,10 +144,10 @@ ELF := simple_socket_client.elf
 # Paths to C, C++, and assembly source files.
 C_SRCS += alt_error_handler.c
 C_SRCS += iniche_init.c
-C_SRCS += led.c
 C_SRCS += network_utilities.c
-C_SRCS += simple_socket_client.c
 C_SRCS += tse_my_system.c
+C_SRCS += simple_socket_client.c
+C_SRCS += led.c
 CXX_SRCS :=
 ASM_SRCS :=
 
@@ -182,7 +182,7 @@ CRT0 :=
 SYS_LIB :=
 
 # Define path to the root of the BSP.
-BSP_ROOT_DIR := ../web_server_bsp/
+BSP_ROOT_DIR := D:\Altera\IU3-17M\Gutnikov\povs\lab3_povs\DE2_115_WEB_SERVER_RGMII_ENET0\Software\web_server_bsp
 
 # List of application specific include directories, library directories and library names
 APP_INCLUDE_DIRS :=

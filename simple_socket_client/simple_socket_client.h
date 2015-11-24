@@ -81,7 +81,42 @@
  */
 void LEDManagementTask();
 void LED7SegLightshowTask();
+//void SSSSimpleSocketServerTask();
+
+/////////////////////////
+#define NONE_PRESSED 0xF
+#define DEBOUNCE 30000
+#define BTN_RIGHT_PRESSED 0x1
+#define BTN_LEFT_PRESSED 0x8
+#define BTN_CNTR_LEFT 0x4
+#define BTN_CNTR_RIGHT 0x2
+//key configuration
+#define ALT_MODULE_CLASS_key altera_avalon_pio
+#define KEY_BASE 0x9000120
+#define KEY_BIT_CLEARING_EDGE_REGISTER 0
+#define KEY_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define KEY_CAPTURE 1
+#define KEY_DATA_WIDTH 4
+#define KEY_DO_TEST_BENCH_WIRING 0
+#define KEY_DRIVEN_SIM_VALUE 0
+#define KEY_EDGE_TYPE "FALLING"
+#define KEY_FREQ 10000000
+#define KEY_HAS_IN 1
+#define KEY_HAS_OUT 0
+#define KEY_HAS_TRI 0
+#define KEY_IRQ 1
+#define KEY_IRQ_INTERRUPT_CONTROLLER_ID 0
+#define KEY_IRQ_TYPE "EDGE"
+#define KEY_NAME "/dev/key"
+#define KEY_RESET_VALUE 0
+#define KEY_SPAN 16
+#define KEY_TYPE "altera_avalon_pio"
+#include "altera_avalon_pio_regs.h"
+volatile int edge_capture;
 void SSSSimpleSocketServerTask();
+static void init_button_pio();
+static void handle_button_interrupts(void* context, alt_u32 id);
+///////////////////////////
 
 void SSSCreateOSDataStructs();
 void SSSCreateTasks();
